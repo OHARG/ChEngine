@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>ChEngine by Experimental1212</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>ChEngine</h1>
+        <h2>Quick-start Java application skeleton for simulation and gaming.</h2>
+        <a href="https://github.com/Experimental1212/ChEngine" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="chengine" class="anchor" href="#chengine"><span class="octicon octicon-link"></span></a>ChEngine</h1>
+
+<p>Quick-start Java application skeleton for simulation and gaming. ChEngine is driven by a runtime loop, making use of one method for behind-the-scenes program logic and another for rendering images to the screen. </p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>The core of ChEngine is <em>ChApplication</em>, an abstract class that can be extended directly or indirectly via <em>ChApplicationAdapter</em>. The adapter class is a child of <em>ChApplication</em> and implements all the required methods with an empty definiton, acknowledging that not all of the capabilities offered by ChEngine are practical in every program solution.</p>
+
+<p>The current abstract methods in <em>ChApplication</em> are <em>init</em>, <em>update</em>, <em>render</em>, and <em>draw</em>.</p>
+
+<ul>
+<li><p><em>void init()</em>
+Allows the execution of code before the main thread is started (via <em>start()</em>). Typical usage is to load resources, add additional components to the frame via <em>addToFrame(Component...components)</em> in <em>ChApplication</em>, and to set the application visibility (default is invisible, or <em>ChApplication.Attribute.visible</em> = false).</p></li>
+<li><p><em>void update()</em>
+Often called <em>tick</em> in other projects, this method is called a given number of times per second (updates per second / ups) and handles the logic of the program.</p></li>
+<li><p><em>void render(ChGraphics g)</em>
+Description missing. (for now) :-/</p></li>
+<li><p><em>void draw(Graphics p)</em>
+Description missing. (for now) :-)</p></li>
+</ul><p><em>Summary</em> :</p>
+
+<ul>
+<li>To use ChEngine, extend either <em>ChApplication</em> or <em>ChApplicationAdapter</em> located in <em>cmurphy.ch.engine.core</em>.</li>
+<li>Five methods define the program lifecycle, <em>init</em>, <em>update</em>, <em>render</em>, <em>draw</em>, and <em>stop</em>. (actually not <em>stop</em> yet!!)</li>
+<li>
+<em>ChApplcation</em> has various static fields in the inner classes <em>Attribute</em> and <em>Flag</em> which are directly configurable.</li>
+<li>To start the application, instantiate a child of ChApplication and call <em>start()</em>. See the <em>Launcher.java</em> and <em>ChEngineDemo.java</em> below.</li>
+</ul><h2>
+<a name="launcherjava" class="anchor" href="#launcherjava"><span class="octicon octicon-link"></span></a>Launcher.java</h2>
+
+<p>When ready to launch the program, a launcher class is recommended. Below is an example of a launcher class.</p>
+
+<pre><code>import cmurphy.ch.engine.core.ChApplication;
+
+public class Launcher {
+    public static void main(String[] args) {
+        ChApplication.Flag.verbose = true; // prints additional information to the console
+        ChApplication demo = new ChEngineDemo(); // where ChEngineDemo is a child of ChApplication
+        demo.start();
+    }
+}
+</code></pre>
+
+<h2>
+<a name="chenginedemojava" class="anchor" href="#chenginedemojava"><span class="octicon octicon-link"></span></a>ChEngineDemo.java</h2>
+
+<p>Description missing. (for now) :-)</p>
+
+<pre><code>import cmurphy.ch.engine.core.*;
+import cmurphy.ch.engine.util.ChGraphics;
+
+public class ChEngineDemo extends ChApplicationAdapter {
+
+    private static final long serialVersionUID = 1L;
+
+    protected void init() {
+        Flag.visible = true;
+    }
+
+    protected void update() {
+        if(System.nanotime() - time() &gt; 5e9)
+            stop();
+    }
+
+    protected void render(ChGraphics g) {
+        drawGradient(g, 0x70F4E5, 0xF4707F);
+    }
+
+    private void drawGradient(ChGraphics g, int col1, int col2) {
+        int c1r = col1 / 0x10000;
+        int c1g = col1 / 0x100 % 0x100;
+        int c1b = col1 % 0x100;
+
+        int c2r = col2 / 0x10000;
+        int c2g = col2 / 0x100 % 0x100;
+        int c2b = col2 % 0x100;
+
+        int rd = (c2r - c1r);
+        int gd = (c2g - c1g);
+        int bd = (c2b - c1b);
+
+        for (int i = 0; i &lt; g.pixels.length; i++) {
+            int rt = col1 + (int)(rd * (i / g.width) / (double)g.height);
+            int gt = col1 + (int)(gd * (i / g.width) / (double)g.height);
+            int bt = col1 + (int)(bd * (i / g.width) / (double)g.height);
+
+            int coltemp = rt * 0x10000 + gt * 0x100 + bt;
+
+            g.pixels[i] = coltemp;
+        }
+    }
+}
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Experimental1212/ChEngine/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Experimental1212/ChEngine/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Experimental1212/ChEngine"></a> is maintained by <a href="https://github.com/Experimental1212">Experimental1212</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
