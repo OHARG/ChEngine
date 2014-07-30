@@ -63,31 +63,7 @@ public class ChEngineDemo extends ChApplicationAdapter {
     }
     
     protected void render(ChGraphics g) {
-        drawGradient(g, 0x70F4E5, 0xF4707F);
-    }
-    
-    private void drawGradient(ChGraphics g, int col1, int col2) {
-        int c1r = col1 / 0x10000;
-        int c1g = col1 / 0x100 % 0x100;
-        int c1b = col1 % 0x100;
-        
-        int c2r = col2 / 0x10000;
-        int c2g = col2 / 0x100 % 0x100;
-        int c2b = col2 % 0x100;
-
-        int rd = (c2r - c1r);
-        int gd = (c2g - c1g);
-        int bd = (c2b - c1b);
-        
-        for (int i = 0; i < g.pixels.length; i++) {
-            int rt = col1 + (int)(rd * (i / g.width) / (double)g.height);
-            int gt = col1 + (int)(gd * (i / g.width) / (double)g.height);
-            int bt = col1 + (int)(bd * (i / g.width) / (double)g.height);
-            
-            int coltemp = rt * 0x10000 + gt * 0x100 + bt;
-            
-            g.pixels[i] = coltemp;
-        }
+        g.gradientY(0x70F4E5, 0xF4707F);
     }
 }
 ```
