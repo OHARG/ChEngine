@@ -3,6 +3,8 @@ ChEngine
 
 Quick-start Java application skeleton for simulation and gaming. ChEngine is driven by a runtime loop, making use of one method for behind-the-scenes program logic and another for rendering images to the screen. 
 
+Get the latest build [here](https://drive.google.com/folderview?id=0B1V0LqDDmha_UUhjNEpTczlaNnM&usp=drive_web).
+
 
 Usage
 -----
