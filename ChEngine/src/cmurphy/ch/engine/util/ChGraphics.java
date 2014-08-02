@@ -1,5 +1,7 @@
 package cmurphy.ch.engine.util;
 
+import java.awt.Point;
+
 public class ChGraphics {
     private int width;
     private int height;
@@ -26,102 +28,28 @@ public class ChGraphics {
         for (int i = 0; i < pixels.length; i++)
             pixels[i] = color;
     }
-
-    public void gradientY(int col1, int col2) {
-        int c1r = col1 / 0x10000;
-        int c1g = col1 / 0x100 % 0x100;
-        int c1b = col1 % 0x100;
-        
-        int c2r = col2 / 0x10000;
-        int c2g = col2 / 0x100 % 0x100;
-        int c2b = col2 % 0x100;
-
-        int rd = (c2r - c1r);
-        int gd = (c2g - c1g);
-        int bd = (c2b - c1b);
-        
-        for (int i = 0; i < pixels.length; i++) {
-            int rt = col1 + (int)(rd * (i / width) / (double)height);
-            int gt = col1 + (int)(gd * (i / width) / (double)height);
-            int bt = col1 + (int)(bd * (i / width) / (double)height);
-            
-            int coltemp = rt * 0x10000 + gt * 0x100 + bt;
-            
-            pixels[i] = coltemp;
-        }
-    }
     
-    public void gradientX(int col1, int col2) {
-        int c1r = col1 / 0x10000;
-        int c1g = col1 / 0x100 % 0x100;
-        int c1b = col1 % 0x100;
-        
-        int c2r = col2 / 0x10000;
-        int c2g = col2 / 0x100 % 0x100;
-        int c2b = col2 % 0x100;
+    public void gradient(Point p1, Point p2, int col1, int col2) {
+        int numCols = (p2.x - p1.x) + (p2.y - p1.y);
+        double rd = (col2 / 0x10000 - col1 / 0x10000) / (double)numCols;
+        double gd = (col2 / 0x100 % 0x100 - col1 / 0x100 % 0x100) / (double)numCols;
+        double bd = (col2 % 0x100 - col1 % 0x100) / (double)numCols;
 
-        int rd = (c2r - c1r);
-        int gd = (c2g - c1g);
-        int bd = (c2b - c1b);
+        double phi = Math.atan((p1.y - p2.y) / (double)(p2.x - p1.x));
+        double cosPhi = Math.cos(phi);
+        double sinPhi = Math.sin(phi);
         
         for (int i = 0; i < pixels.length; i++) {
-            int rt = col1 + (int)(rd * (i % width) / (double)width);
-            int gt = col1 + (int)(gd * (i % width) / (double)width);
-            int bt = col1 + (int)(bd * (i % width) / (double)width);
+            int x = i % width - p1.x;
+            int y = i / width - p1.y;
+            double xx = x * cosPhi - y * sinPhi;
+            if(xx < 0) xx = 0;
+            if(xx > numCols) xx = numCols;
+            int rt = col1 + (int)(rd * xx);
+            int gt = col1 + (int)(gd * xx);
+            int bt = col1 + (int)(bd * xx);
             
-            int coltemp = rt * 0x10000 + gt * 0x100 + bt;
-            
-            pixels[i] = coltemp;
-        }
-    }
-
-    public void gradientNXY(int col1, int col2) {
-        // TODO incorrect algorithm
-        int c1r = col1 / 0x10000;
-        int c1g = col1 / 0x100 % 0x100;
-        int c1b = col1 % 0x100;
-        
-        int c2r = col2 / 0x10000;
-        int c2g = col2 / 0x100 % 0x100;
-        int c2b = col2 % 0x100;
-
-        int rd = (c2r - c1r);
-        int gd = (c2g - c1g);
-        int bd = (c2b - c1b);
-        
-        for (int i = 0; i < pixels.length; i++) {
-            int rt = col1 + (int)(rd * (i % width + i / (double)width));
-            int gt = col1 + (int)(gd * (i % width + i / (double)width));
-            int bt = col1 + (int)(bd * (i % width + i / (double)width));
-            
-            int coltemp = rt * 0x10000 + gt * 0x100 + bt;
-            
-            pixels[i] = coltemp;
-        }
-    }
-    
-    public void gradientXY(int col1, int col2) {
-        // TODO not implemented
-        int c1r = col1 / 0x10000;
-        int c1g = col1 / 0x100 % 0x100;
-        int c1b = col1 % 0x100;
-        
-        int c2r = col2 / 0x10000;
-        int c2g = col2 / 0x100 % 0x100;
-        int c2b = col2 % 0x100;
-
-        int rd = (c2r - c1r);
-        int gd = (c2g - c1g);
-        int bd = (c2b - c1b);
-        
-        for (int i = 0; i < pixels.length; i++) {
-            int rt = col1 + (int)(rd * (i % width) / (double)width);
-            int gt = col1 + (int)(gd * (i % width) / (double)width);
-            int bt = col1 + (int)(bd * (i % width) / (double)width);
-            
-            int coltemp = rt * 0x10000 + gt * 0x100 + bt;
-            
-            pixels[i] = coltemp;
-        }
+            pixels[i] = rt * 0x10000 + gt * 0x100 + bt;
+        }        
     }
 }
