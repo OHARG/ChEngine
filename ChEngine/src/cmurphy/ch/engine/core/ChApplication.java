@@ -103,6 +103,9 @@ public abstract class ChApplication extends Canvas implements Runnable {
         
         // print formated startup time: "Started! (000.000 ms)"
         System.out.println("Started! (" + (int)((System.nanoTime() - nanoTime) / 1e3) / 1e3 + " ms)");
+
+        if(Flag.visible)
+            frame.setVisible(true);
         
         while (running) {
             now = System.nanoTime();
@@ -129,8 +132,6 @@ public abstract class ChApplication extends Canvas implements Runnable {
     }
     
     private void chUpdate() {
-        if(Flag.visible)
-            frame.setVisible(true);
         update();
     }
     
