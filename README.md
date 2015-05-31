@@ -19,10 +19,10 @@ Allows the execution of code before the main thread is started (via _start()_). 
 Often called _tick_ in other projects, this method is called a given number of times per second (updates per second / ups) and handles the logic of the program.
 
 - _void render(ChGraphics g)_
-Description missing. (for now) :-/
+Draw graphics using the custom ChGraphics context g. Some standard methods in ChGraphics include clearing the screen and setting a background gradient.
 
-- _void draw(Graphics p)_
-Description missing. (for now) :-)
+- _void draw(Graphics g)_
+Draw graphics using the standard java.awt.Graphics context g.
 
 _Summary_ :
 - To use ChEngine, extend either _ChApplication_ or _ChApplicationAdapter_ located in _cmurphy.ch.engine.core_.
@@ -46,7 +46,7 @@ public class Launcher {
 ```
 ChEngineDemo.java
 -----------------
-Description missing. (for now) :-)
+Creates an animated background gradient and then automatically closes the program after five seconds.
 ```
 import cmurphy.ch.engine.core.*;
 import cmurphy.ch.engine.util.ChGraphics;
@@ -60,12 +60,15 @@ public class ChEngineDemo extends ChApplicationAdapter {
     }
 
     protected void update() {
-        if(System.nanotime() - time() > 5e9)
+        if(System.nanoTime() - time() > 5e9)
             stop();
     }
     
     protected void render(ChGraphics g) {
-        g.gradientY(0x70F4E5, 0xF4707F);
+        g.gradient(java.awt.Point(0, 0),
+                   java.awt.Point(ChApplication.Attribute.width, ChApplication.Attribute.height),
+                   0x70F4E5,
+                   0xF4707F);
     }
 }
 ```
