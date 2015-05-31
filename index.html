@@ -49,9 +49,9 @@ Allows the execution of code before the main thread is started (via <em>start()<
 <li><p><em>void update()</em>
 Often called <em>tick</em> in other projects, this method is called a given number of times per second (updates per second / ups) and handles the logic of the program.</p></li>
 <li><p><em>void render(ChGraphics g)</em>
-Description missing. (for now) :-/</p></li>
+Draw graphics using the custom ChGraphics context g. Some standard methods in ChGraphics include clearing the screen and setting a background gradient.</p></li>
 <li><p><em>void draw(Graphics p)</em>
-Description missing. (for now) :-)</p></li>
+Draw graphics using the standard java.awt.Graphics context g.</p></li>
 </ul><p><em>Summary</em> :</p>
 
 <ul>
@@ -79,7 +79,7 @@ public class Launcher {
 <h2>
 <a name="chenginedemojava" class="anchor" href="#chenginedemojava"><span class="octicon octicon-link"></span></a>ChEngineDemo.java</h2>
 
-<p>Description missing. (for now) :-)</p>
+<p>Creates an animated background gradient and then automatically closes the program after five seconds.</p>
 
 <pre><code>import cmurphy.ch.engine.core.*;
 import cmurphy.ch.engine.util.ChGraphics;
@@ -93,12 +93,15 @@ public class ChEngineDemo extends ChApplicationAdapter {
     }
 
     protected void update() {
-        if(System.nanotime() - time() &gt; 5e9)
+        if(System.nanoTime() - time() &gt; 5e9)
             stop();
     }
-
+    
     protected void render(ChGraphics g) {
-        g.gradientY(0x70F4E5, 0xF4707F);
+        g.gradient(java.awt.Point(0, 0),
+                   java.awt.Point(ChApplication.Attribute.width, ChApplication.Attribute.height),
+                   0x70F4E5,
+                   0xF4707F);
     }
 }
 </code></pre>
