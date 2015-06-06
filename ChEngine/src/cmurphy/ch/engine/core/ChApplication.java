@@ -9,6 +9,7 @@ import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -17,7 +18,9 @@ import javax.swing.JFrame;
 
 import cmurphy.ch.engine.util.ChGraphics;
 
-public abstract class ChApplication extends Canvas implements Runnable {
+public abstract class ChApplication extends Canvas
+	implements Runnable,
+	WindowListener {
     
     private static final long serialVersionUID = 1L;
     
@@ -30,12 +33,15 @@ public abstract class ChApplication extends Canvas implements Runnable {
         
         public static int backgroundColor = 0;
         public static int bufferStrategy = 3;
+        public static double averageFramePollingTime = 2;
     }
     
     public static class Flag {
         public static boolean verbose = false;
         public static boolean clearScreenOnRefresh = true;
         public static boolean visible = false;
+        public static boolean resizable = false;
+        public static boolean noborder = false;
     }
     
     private Thread thread;
@@ -79,14 +85,17 @@ public abstract class ChApplication extends Canvas implements Runnable {
     }
 
     public synchronized void stop() {
-        System.out.println("Stopping...");
         running = false;
+    }
+    
+    private void chStop() {
         frame.dispose();
         try {
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
 
     @Override
@@ -98,6 +107,7 @@ public abstract class ChApplication extends Canvas implements Runnable {
 
         int frames = 0; // how many calls to render()
         int updates = 0; // count how many calls to update()
+        double multiplier = Attribute.averageFramePollingTime; // number of seconds to collect data on frames
         
         requestFocus();
         
@@ -120,18 +130,23 @@ public abstract class ChApplication extends Canvas implements Runnable {
             frames++;
             
             // display ups and fps
-            if (Flag.verbose && System.currentTimeMillis() - timer >= 1000) {
-                timer += 1000; // increment second
-                System.out.println(updates + " ups, " + frames + " fps");
-                frame.setTitle(Attribute.title + " | " + updates + " ups, " + frames + " fps");
+            if (Flag.verbose && System.currentTimeMillis() - timer >= 1000 * multiplier) {
+                timer += 1000 * multiplier; // increment second
+                System.out.println((int)(updates / multiplier) + " ups, " +
+                				   (int)(frames / multiplier) + " fps");
+                frame.setTitle(Attribute.title + " | " +
+                			   (int)(updates / multiplier) + " ups, " +
+                			   (int)(frames / multiplier) + " fps");
                 updates = 0;
                 frames = 0;
             }
         }
-        stop();
+        chStop();
     }
     
     private void chUpdate() {
+    	Attribute.width = getWidth();
+    	Attribute.height = getHeight();
         update();
     }
     
@@ -160,12 +175,14 @@ public abstract class ChApplication extends Canvas implements Runnable {
     }
     
     private void chInitWindow() {
-        frame.setResizable(false);
+        frame.setResizable(Flag.resizable);
+        frame.setUndecorated(Flag.noborder);
         frame.setTitle(Attribute.title);
         frame.add(this);
         frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setLocationRelativeTo(null); // centered
+        frame.addWindowListener(this);
     }
 
     public long time() { return nanoTime; }
@@ -187,4 +204,5 @@ public abstract class ChApplication extends Canvas implements Runnable {
     protected abstract void update();
     protected abstract void render(ChGraphics g);
     protected abstract void draw(Graphics g);
+    
 }

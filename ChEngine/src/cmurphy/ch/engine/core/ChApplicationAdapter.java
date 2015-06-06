@@ -1,6 +1,7 @@
 package cmurphy.ch.engine.core;
 
 import java.awt.Graphics;
+import java.awt.event.WindowEvent;
 
 import cmurphy.ch.engine.util.ChGraphics;
 
@@ -33,4 +34,14 @@ public class ChApplicationAdapter extends ChApplication {
     @Override
     protected void draw(Graphics g) {}
 
+    // WindowListener
+    public void windowClosed(WindowEvent e) {
+    }
+    public void windowClosing(WindowEvent e) {
+    }
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
+	public void windowActivated(WindowEvent e) {}
+	public void windowDeactivated(WindowEvent e) {}
+	public void windowOpened(WindowEvent e) {}
 }
